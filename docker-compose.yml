@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  examples:
+    container_name: uamqpphpbinding
+    image: uamqpphpbinding
+    tty: true
+    working_dir: /code
+    volumes:
+      - ./examples:/code
+      - ./uamqpphpbinding.ini:/etc/php/7.2/cli/conf.d/uamqpphpbinding.ini
+      - ./uamqpphpbinding.so:/usr/lib/php/20170718/uamqpphpbinding.so

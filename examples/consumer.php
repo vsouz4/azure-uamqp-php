@@ -1,12 +1,13 @@
 <?php
 
-$conn = new AMQPConnection(
-    'something-here.servicebus.windows.net',
-    'SomeAccessKey',
-    '12encse213t98vdr/1USYZ+3mnQETa2Pp027sjaRY='
-);
-$session = new AMQPSession($conn);
-$consumer = new AMQPConsumer($session, 'my.topic/subscriptions/my.subscription');
-$consumer->consume(function (AMQPMessage $message) {
-    echo $message->getBody(), PHP_EOL;
-});
+use Azure\uAMQP\Consumer;
+use Azure\uAMQP\Message;
+
+include_once __DIR__ . '/parameters.php';
+
+$session = include __DIR__ . '/session.php';
+
+(new Consumer($session, MY_SUBSCRIPTION))
+    ->consume(function (Message $message) {
+        echo $message->getBody(), PHP_EOL;
+    });

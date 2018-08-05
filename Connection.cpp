@@ -8,28 +8,43 @@
 void Connection::__construct(Php::Parameters &params)
 {
     host    = params[0].stringValue();
-    keyName = params[1].stringValue();
-    key     = params[2].stringValue();
+    port    = params[1].numericValue();
+    useTls  = params[2].boolValue();
+    keyName = params[3].stringValue();
+    key     = params[4].stringValue();
 
-    sasl_plain_config = { keyName.c_str(), key.c_str(), NULL };
-    tls_io_config = { host.c_str(), 5671 };
+    bool useAuth = !keyName.empty() && !key.empty();
 
     platform_init();
 
-    /* create SASL PLAIN handler */
-    sasl_mechanism_handle = saslmechanism_create(saslplain_get_interface(), &sasl_plain_config);
+    if (useTls) {
+        tls_io_config = { host.c_str(), port };
+        /* create the TLS IO */
+        tlsio_interface = platform_get_default_tlsio();
+        tls_io = xio_create(tlsio_interface, &tls_io_config);
+    } else {
+        socketio_config = { host.c_str(), port, NULL };
+        socket_io = xio_create(socketio_get_interface_description(), &socketio_config);
+    }
 
-    /* create the TLS IO */
-    tlsio_interface = platform_get_default_tlsio();
-    tls_io = xio_create(tlsio_interface, &tls_io_config);
+    if (useAuth) {
+        sasl_plain_config = { keyName.c_str(), key.c_str(), NULL };
+        /* create SASL PLAIN handler */
+        sasl_mechanism_handle = saslmechanism_create(saslplain_get_interface(), &sasl_plain_config);
+        /* create the SASL client IO using the TLS IO or SOCKET OI */
+        if (useTls) {
+            sasl_io_config.underlying_io = tls_io;
+        } else {
+            sasl_io_config.underlying_io = socket_io;
+        }
+        sasl_io_config.sasl_mechanism = sasl_mechanism_handle;
+        sasl_io = xio_create(saslclientio_get_interface_description(), &sasl_io_config);
+    }
 
-    /* create the SASL client IO using the TLS IO */
-    sasl_io_config.underlying_io = tls_io;
-    sasl_io_config.sasl_mechanism = sasl_mechanism_handle;
-    sasl_io = xio_create(saslclientio_get_interface_description(), &sasl_io_config);
-
-    /* create the connection, session and link */
-    connection = connection_create(sasl_io, host.c_str(), "some", NULL, NULL);
+    /* create the connection */
+    connection = connection_create(useAuth ? sasl_io : socket_io, host.c_str(), "some", NULL, NULL);
+    // uncomment when debugging
+    // connection_set_trace(connection, true);
 }
 
 std::string Connection::getHost()

@@ -37,7 +37,7 @@ static AMQP_VALUE on_message_received(const void* context, MESSAGE_HANDLE messag
 
     Message *msg = new Message();
     msg->setBody(body);
-    callback(Php::Object("AMQPMessage", msg));
+    callback(Php::Object("Azure\\uAMQP\\Message", msg));
 
     return messaging_delivery_accepted();
 }

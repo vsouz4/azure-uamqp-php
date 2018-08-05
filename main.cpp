@@ -14,37 +14,39 @@ extern "C" {
     {
         static Php::Extension extension("uamqpphpbinding", "0.1");
         
-        Php::Class<Connection> connection("AMQPConnection");
+        Php::Class<Connection> connection("Azure\\uAMQP\\Connection");
         connection.method<&Connection::__construct>("__construct", {
             Php::ByVal("host", Php::Type::String),
+            Php::ByVal("port", Php::Type::Numeric),
+            Php::ByVal("useTls", Php::Type::Bool),
             Php::ByVal("keyName", Php::Type::String),
             Php::ByVal("key", Php::Type::String)
         });
 
-        Php::Class<Session> session("AMQPSession");
+        Php::Class<Session> session("Azure\\uAMQP\\Session");
         session.method<&Session::__construct>("__construct", {
-            Php::ByVal("connection", "AMQPConnection")
+            Php::ByVal("connection", "Azure\\uAMQP\\Connection")
         });
 
-        Php::Class<Producer> producer("AMQPProducer");
+        Php::Class<Producer> producer("Azure\\uAMQP\\Producer");
         producer.method<&Producer::__construct>("__construct", {
-            Php::ByVal("session", "AMQPSession"),
+            Php::ByVal("session", "Azure\\uAMQP\\Session"),
             Php::ByVal("resourceName", Php::Type::String)
         });
         producer.method<&Producer::publish>("publish", {
-            Php::ByVal("message", "AMQPMessage")
+            Php::ByVal("message", "Azure\\uAMQP\\Message")
         });
 
-        Php::Class<Consumer> consumer("AMQPConsumer");
+        Php::Class<Consumer> consumer("Azure\\uAMQP\\Consumer");
         consumer.method<&Consumer::__construct>("__construct", {
-            Php::ByVal("session", "AMQPSession"),
+            Php::ByVal("session", "Azure\\uAMQP\\Session"),
             Php::ByVal("resourceName", Php::Type::String)
         });
         consumer.method<&Consumer::consume>("consume", {
             Php::ByVal("callback", Php::Type::Callable)
         });
 
-        Php::Class<Message> message("AMQPMessage");
+        Php::Class<Message> message("Azure\\uAMQP\\Message");
         message.method<&Message::__construct>("__construct", {
             Php::ByVal("body", Php::Type::String)
         });

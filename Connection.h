@@ -10,13 +10,17 @@ class Connection : public Php::Base
 {
 private:
     std::string host;
+    int port;
+    bool useTls;
     std::string keyName;
     std::string key;
 
     CONNECTION_HANDLE connection;
     XIO_HANDLE sasl_io;
+    XIO_HANDLE socket_io;
     SASL_PLAIN_CONFIG sasl_plain_config;
     TLSIO_CONFIG tls_io_config;
+    SOCKETIO_CONFIG socketio_config;
     const IO_INTERFACE_DESCRIPTION* tlsio_interface;
     SASLCLIENTIO_CONFIG sasl_io_config;
     SASL_MECHANISM_HANDLE sasl_mechanism_handle;

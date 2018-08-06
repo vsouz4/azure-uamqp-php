@@ -12,7 +12,8 @@ void Consumer::__construct(Php::Parameters &params)
     resourceName = params[1].stringValue();
 
     /* listen only on partition 0 */
-    source = messaging_create_source(("amqps://" + session->getConnection()->getHost() + "/" + resourceName + "/ConsumerGroups/$Default/Partitions/0").c_str());
+//    source = messaging_create_source(("amqps://" + session->getConnection()->getHost() + "/" + resourceName + "/ConsumerGroups/$Default/Partitions/0").c_str());
+    source = messaging_create_source(("amqps://" + session->getConnection()->getHost() + "/" + resourceName).c_str());
     target = messaging_create_target("ingress-rx");
     link = link_create(session->getSessionHandler(), "receiver-link", role_receiver, source, target);
     link_set_rcv_settle_mode(link, receiver_settle_mode_first);

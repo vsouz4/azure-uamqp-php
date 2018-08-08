@@ -44,7 +44,7 @@ void Connection::__construct(Php::Parameters &params)
     /* create the connection */
     connection = connection_create(useAuth ? sasl_io : socket_io, host.c_str(), "some", NULL, NULL);
     // uncomment when debugging
-    // connection_set_trace(connection, true);
+    connection_set_trace(connection, true);
 }
 
 std::string Connection::getHost()

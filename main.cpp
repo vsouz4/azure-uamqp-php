@@ -58,6 +58,10 @@ extern "C" {
             Php::ByVal("key", Php::Type::String),
             Php::ByVal("value", Php::Type::String)
         });
+        message.method<&Message::setMessageAnnotation>("setMessageAnnotation", {
+            Php::ByVal("key", Php::Type::String),
+            Php::ByVal("value", Php::Type::String)
+        });
 
         extension.add(std::move(connection));
         extension.add(std::move(session));

@@ -40,6 +40,7 @@ void Producer::publish(Php::Parameters &params)
 
     /* create a message sender */
     message_sender = messagesender_create(link, NULL, NULL);
+    messagesender_set_trace(message_sender, true);
     messagesender_open(message_sender);
 
     (void)messagesender_send_async(message_sender, message, on_message_send_complete, message, 10000);

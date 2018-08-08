@@ -9,6 +9,8 @@ private:
     std::string body;
     MESSAGE_HANDLE message;
     AMQP_VALUE application_properties;
+    AMQP_VALUE application_properties_map;
+    AMQP_VALUE annotations_map;
     BINARY_DATA binary_data;
 
 public:
@@ -19,11 +21,11 @@ public:
 
     void setMessageHandler(MESSAGE_HANDLE message);
     MESSAGE_HANDLE getMessageHandler();
-    AMQP_VALUE map;
     Php::Value getBody();
     void setBody(std::string body);
     Php::Value getApplicationProperty(Php::Parameters &params);
     void setApplicationProperty(Php::Parameters &params);
+    void setMessageAnnotation(Php::Parameters &params);
 };
 
 #endif

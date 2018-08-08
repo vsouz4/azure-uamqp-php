@@ -28,16 +28,8 @@ static AMQP_VALUE on_message_received(const void* context, MESSAGE_HANDLE messag
 {
     (void)context;
 
-    std::string body;
-
-    BINARY_DATA binary_data;
-    message_get_body_amqp_data_in_place(message, 0, &binary_data);
-    for (size_t i = 0; i < binary_data.length; ++i) {
-        body += binary_data.bytes[i];
-    }
-
     Message *msg = new Message();
-    msg->setBody(body);
+    msg->setMessageHandler(message);
     callback(Php::Object("Azure\\uAMQP\\Message", msg));
 
     return messaging_delivery_accepted();

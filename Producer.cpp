@@ -36,19 +36,7 @@ void Producer::publish(Php::Parameters &params)
 {
     Message *msg = (Message*) params[0].implementation();
 
-    message = message_create();
-    // binary_data.bytes = (const unsigned char*) msg->getBody().stringValue().c_str();
-    // binary_data.length = sizeof(msg->getBody().stringValue().c_str());
-    //unsigned char hello[] = { 'H', 'e', 'l', 'l', ' ', 'l', 'l', 'o', ' ', 'e', 'l', 'l', 'o' };
-
-    std::string body = msg->getBody().stringValue();
-    unsigned char bodyCharArray[body.size()];
-    for (unsigned int i = 0; i < body.size(); i++) {
-        bodyCharArray[i] = body.at(i);
-    }
-    binary_data.bytes = bodyCharArray;
-    binary_data.length = sizeof(bodyCharArray);
-    message_add_body_amqp_data(message, binary_data);
+    MESSAGE_HANDLE message = msg->getMessageHandler();
 
     /* create a message sender */
     message_sender = messagesender_create(link, NULL, NULL);

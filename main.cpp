@@ -51,6 +51,13 @@ extern "C" {
             Php::ByVal("body", Php::Type::String)
         });
         message.method<&Message::getBody>("getBody");
+        message.method<&Message::getApplicationProperty>("getApplicationProperty", {
+            Php::ByVal("key", Php::Type::String)
+        });
+        message.method<&Message::setApplicationProperty>("setApplicationProperty", {
+            Php::ByVal("key", Php::Type::String),
+            Php::ByVal("value", Php::Type::String)
+        });
 
         extension.add(std::move(connection));
         extension.add(std::move(session));

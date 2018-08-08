@@ -11,10 +11,8 @@ private:
 
     LINK_HANDLE link;
     MESSAGE_SENDER_HANDLE message_sender;
-    MESSAGE_HANDLE message;
     AMQP_VALUE source;
     AMQP_VALUE target;
-    BINARY_DATA binary_data;
 
 public:
     Producer() = default;

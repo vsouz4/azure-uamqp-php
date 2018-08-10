@@ -11,4 +11,5 @@ $session = include __DIR__ . '/session.php';
     ->consume(function (Message $message) {
         echo $message->getBody(), PHP_EOL;
         echo $message->getApplicationProperty('some-application-property'), PHP_EOL;
+        echo $message->getMessageAnnotation('x-opt-scheduled-enqueue-time'), PHP_EOL;
     });

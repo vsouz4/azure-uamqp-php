@@ -25,6 +25,7 @@ public:
     void setBody(std::string body);
     Php::Value getApplicationProperty(Php::Parameters &params);
     void setApplicationProperty(Php::Parameters &params);
+    Php::Value getMessageAnnotation(Php::Parameters &params);
     void setMessageAnnotation(Php::Parameters &params);
 };
 

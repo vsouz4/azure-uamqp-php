@@ -72,6 +72,20 @@ Php::Value Message::getApplicationProperty(Php::Parameters &params)
     return value;
 }
 
+Php::Value Message::getMessageAnnotation(Php::Parameters &params)
+{
+    std::string key = params[0].stringValue();
+
+    // @todo add check for not doing this everytime
+    message_get_message_annotations(message, &annotations_map);
+
+    const char* value = NULL;
+
+    amqpvalue_get_string(amqpvalue_get_map_value(annotations_map, amqpvalue_create_symbol(key.c_str())), &value);
+
+    return value;
+}
+
 void Message::setApplicationProperty(Php::Parameters &params)
 {
     std::string key = params[0].stringValue();

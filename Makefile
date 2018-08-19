@@ -11,7 +11,7 @@ COMPILER            = g++
 LINKER              = g++
 COMPILER_FLAGS      = -Wall -c -O2 -std=c++11 -fpic -o
 LINKER_FLAGS        = -shared
-LINKER_DEPENDENCIES = -lphpcpp -luamqp -laziotsharedutil
+LINKER_DEPENDENCIES = -lphpcpp -luamqp -laziotsharedutil -luuid
 
 RM =   rm -f
 CP =   cp -f

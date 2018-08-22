@@ -52,17 +52,21 @@ extern "C" {
         });
         message.method<&Message::getBody>("getBody");
         message.method<&Message::getApplicationProperty>("getApplicationProperty", {
-            Php::ByVal("key", Php::Type::String)
+            Php::ByVal("key", Php::Type::String),
+            Php::ByVal("type", Php::Type::String)
         });
         message.method<&Message::getMessageAnnotation>("getMessageAnnotation", {
-            Php::ByVal("key", Php::Type::String)
+            Php::ByVal("key", Php::Type::String),
+            Php::ByVal("type", Php::Type::String)
         });
         message.method<&Message::setApplicationProperty>("setApplicationProperty", {
             Php::ByVal("key", Php::Type::String),
+            Php::ByVal("type", Php::Type::String),
             Php::ByVal("value", Php::Type::String)
         });
         message.method<&Message::setMessageAnnotation>("setMessageAnnotation", {
             Php::ByVal("key", Php::Type::String),
+            Php::ByVal("type", Php::Type::String),
             Php::ByVal("value", Php::Type::String)
         });
 

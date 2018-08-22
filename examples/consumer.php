@@ -10,6 +10,6 @@ $session = include __DIR__ . '/session.php';
 (new Consumer($session, MY_SUBSCRIPTION))
     ->consume(function (Message $message) {
         echo $message->getBody(), PHP_EOL;
-        echo $message->getApplicationProperty('some-application-property'), PHP_EOL;
-        echo $message->getMessageAnnotation('x-opt-scheduled-enqueue-time'), PHP_EOL;
+        echo $message->getApplicationProperty('some-application-property', 'S'), PHP_EOL;
+        echo $message->getMessageAnnotation('x-opt-scheduled-enqueue-time', 'T'), PHP_EOL;
     });

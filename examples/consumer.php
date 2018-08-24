@@ -1,15 +1,24 @@
 <?php
 
-use Azure\uAMQP\Consumer;
 use Azure\uAMQP\Message;
 
 include_once __DIR__ . '/parameters.php';
 
-$session = include __DIR__ . '/session.php';
+$connection = include __DIR__ . '/connection.php';
 
-(new Consumer($session, MY_SUBSCRIPTION))
-    ->consume(function (Message $message) {
+$connection->consume(
+    MY_SUBSCRIPTION,
+    function (Message $message) {
         echo $message->getBody(), PHP_EOL;
-    #   echo $message->getApplicationProperty('some-application-property', 'S'), PHP_EOL;
-    #   echo $message->getMessageAnnotation('x-opt-scheduled-enqueue-time', 'T'), PHP_EOL;
-    });
+        echo $message->getApplicationProperty('some-application-property', 'S'), PHP_EOL;
+        echo $message->getMessageAnnotation('x-opt-scheduled-enqueue-time', 'T'), PHP_EOL;
+/*
+        echo PHP_EOL;
+        echo PHP_EOL;
+        echo PHP_EOL;
+        echo $message->getBody(), PHP_EOL;
+        echo $message->getApplicationProperty('some-application-property', 'S'), PHP_EOL;
+        echo $message->getMessageAnnotation('x-opt-scheduled-enqueue-time', 'T'), PHP_EOL;
+ */
+    }
+);

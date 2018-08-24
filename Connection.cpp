@@ -4,6 +4,10 @@
 #include "azure_c_shared_utility/socketio.h"
 #include "azure_uamqp_c/uamqp.h"
 #include "Connection.h"
+#include "Session.h"
+#include "Producer.h"
+#include "Consumer.h"
+#include "Message.h"
 
 void Connection::__construct(Php::Parameters &params)
 {
@@ -14,6 +18,11 @@ void Connection::__construct(Php::Parameters &params)
     key     = params[4].stringValue();
     debug   = params.size() == 6 ? params[5].boolValue() : false;
 
+    connect();
+}
+
+void Connection::connect()
+{
     bool useAuth = !keyName.empty() && !key.empty();
 
     if (platform_init() != 0) {
@@ -49,6 +58,27 @@ void Connection::__construct(Php::Parameters &params)
     if (isDebugOn()) {
         connection_set_trace(connection, true);
     }
+
+    // Session
+    session = new Session(this);
+}
+
+void Connection::publish(Php::Parameters &params)
+{
+    std::string resourceName = params[0].stringValue();
+    Message *message = (Message*) params[1].implementation();
+
+    Producer *producer = new Producer(session, resourceName);
+    producer->publish(message);
+}
+
+void Connection::consume(Php::Parameters &params)
+{
+    std::string resourceName = params[0].stringValue();
+    Php::Value callback = params[1];
+
+    Consumer *consumer = new Consumer(session, resourceName);
+    consumer->consume(callback);
 }
 
 std::string Connection::getHost()

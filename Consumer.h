@@ -2,8 +2,9 @@
 #define UAMQP_PHP_CONSUMER_H
 #include <phpcpp.h>
 #include "Session.h"
+#include "Message.h"
 
-class Consumer : public Php::Base
+class Consumer
 {
 private:
     Session *session;
@@ -15,12 +16,10 @@ private:
     AMQP_VALUE target;
 
 public:
-    Consumer() = default;
+    Consumer(Session *session, std::string resourceName);
     virtual ~Consumer() = default;
 
-    void __construct(Php::Parameters &params);
-
-    void consume(Php::Parameters &params);
+    void consume(Php::Value callback);
 };
 
 #endif

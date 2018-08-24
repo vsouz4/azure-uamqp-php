@@ -6,10 +6,23 @@
 #include "Session.h"
 #include "Message.h"
 
-void Consumer::__construct(Php::Parameters &params)
+static Php::Value callbackFn;
+
+static AMQP_VALUE on_message_received(const void* context, MESSAGE_HANDLE message)
 {
-    session = (Session*) params[0].implementation();
-    resourceName = params[1].stringValue();
+    (void)context;
+
+    Message *msg = new Message();
+    msg->setMessageHandler(message);
+    callbackFn(Php::Object("Azure\\uAMQP\\Message", msg));
+
+    return messaging_delivery_accepted();
+}
+
+Consumer::Consumer(Session *session, std::string resourceName)
+{
+    this->session = session;
+    this->resourceName = resourceName;
 
     source = messaging_create_source(("amqps://" + session->getConnection()->getHost() + "/" + resourceName).c_str());
     target = messaging_create_target("ingress-rx");
@@ -20,22 +33,9 @@ void Consumer::__construct(Php::Parameters &params)
     amqpvalue_destroy(target);
 }
 
-static Php::Value callback;
-
-static AMQP_VALUE on_message_received(const void* context, MESSAGE_HANDLE message)
+void Consumer::consume(Php::Value callback)
 {
-    (void)context;
-
-    Message *msg = new Message();
-    msg->setMessageHandler(message);
-    callback(Php::Object("Azure\\uAMQP\\Message", msg));
-
-    return messaging_delivery_accepted();
-}
-
-void Consumer::consume(Php::Parameters &params)
-{
-    callback = params[0];
+    callbackFn = callback;
 
     /* create a message receiver */
     message_receiver = messagereceiver_create(link, NULL, NULL);

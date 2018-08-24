@@ -2,8 +2,9 @@
 #define UAMQP_PHP_PRODUCER_H
 #include <phpcpp.h>
 #include "Session.h"
+#include "Message.h"
 
-class Producer : public Php::Base
+class Producer
 {
 private:
     Session *session;
@@ -15,12 +16,10 @@ private:
     AMQP_VALUE target;
 
 public:
-    Producer() = default;
+    Producer(Session *session, std::string resourceName);
     virtual ~Producer() = default;
 
-    void __construct(Php::Parameters &params);
-
-    void publish(Php::Parameters &params);
+    void publish(Message *message);
 };
 
 #endif

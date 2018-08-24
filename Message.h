@@ -9,20 +9,19 @@ private:
     std::string body;
     MESSAGE_HANDLE message;
     AMQP_VALUE application_properties;
-    AMQP_VALUE application_properties_map;
     AMQP_VALUE annotations_map;
     BINARY_DATA binary_data;
 
 public:
-    Message() = default;
+    Message();
     virtual ~Message() = default;
-
-    void __construct(Php::Parameters &params);
 
     void setMessageHandler(MESSAGE_HANDLE message);
     MESSAGE_HANDLE getMessageHandler();
-    Php::Value getBody();
     void setBody(std::string body);
+
+    void __construct(Php::Parameters &params);
+    Php::Value getBody();
     Php::Value getApplicationProperty(Php::Parameters &params);
     void setApplicationProperty(Php::Parameters &params);
     Php::Value getMessageAnnotation(Php::Parameters &params);

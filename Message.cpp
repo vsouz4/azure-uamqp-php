@@ -58,13 +58,6 @@ static void add_map_double(AMQP_VALUE map, const char* name, double value)
     AMQP_VALUE amqp_value_value = amqpvalue_create_double(value);
     add_map_item(map, name, amqp_value_value);
 }
-static void add_amqp_message_annotation(MESSAGE_HANDLE message, AMQP_VALUE msg_annotations_map)
-{
-    AMQP_VALUE msg_annotations;
-    msg_annotations = amqpvalue_create_message_annotations(msg_annotations_map);
-    message_set_message_annotations(message, (annotations)msg_annotations);
-    annotations_destroy(msg_annotations);
-}
 static void add_map_value(AMQP_VALUE map, const char* key, const char type, Php::Value value)
 {
     switch (type) {
@@ -83,25 +76,28 @@ static void add_map_value(AMQP_VALUE map, const char* key, const char type, Php:
     }
 }
 
-void Message::__construct(Php::Parameters &params)
+static void add_amqp_message_annotation(MESSAGE_HANDLE message, AMQP_VALUE msg_annotations_map)
 {
-    body = params[0].stringValue();
+    AMQP_VALUE msg_annotations;
+    msg_annotations = amqpvalue_create_message_annotations(msg_annotations_map);
+    message_set_message_annotations(message, (annotations)msg_annotations);
+    annotations_destroy(msg_annotations);
+}
 
+Message::Message()
+{
     message = message_create();
-
-    unsigned char bodyCharArray[body.size()];
-    for (unsigned int i = 0; i < body.size(); i++) {
-        bodyCharArray[i] = body.at(i);
-    }
-    binary_data.bytes = bodyCharArray;
-    binary_data.length = sizeof(bodyCharArray);
-    message_add_body_amqp_data(message, binary_data);
 
     application_properties = amqpvalue_create_map();
     annotations_map = amqpvalue_create_map();
 
     message_set_application_properties(message, application_properties);
     add_amqp_message_annotation(message, annotations_map);
+}
+
+void Message::__construct(Php::Parameters &params)
+{
+    setBody(params[0].stringValue());
 }
 
 Php::Value Message::getBody()
@@ -119,7 +115,17 @@ Php::Value Message::getBody()
 void Message::setBody(std::string body)
 {
     this->body = body;
+
+    unsigned char bodyCharArray[body.size()];
+    for (unsigned int i = 0; i < body.size(); i++) {
+        bodyCharArray[i] = body.at(i);
+    }
+    binary_data.bytes = bodyCharArray;
+    binary_data.length = sizeof(bodyCharArray);
+    message_add_body_amqp_data(message, binary_data);
 }
+
+static AMQP_VALUE application_properties_map;
 
 Php::Value Message::getApplicationProperty(Php::Parameters &params)
 {

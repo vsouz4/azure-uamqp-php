@@ -14,6 +14,7 @@ private:
     bool useTls;
     std::string keyName;
     std::string key;
+    bool debug;
 
     CONNECTION_HANDLE connection;
     XIO_HANDLE sasl_io;
@@ -36,6 +37,7 @@ public:
     CONNECTION_HANDLE getConnectionHandler();
     void doWork();
     void close();
+    bool isDebugOn();
 };
 
 #endif

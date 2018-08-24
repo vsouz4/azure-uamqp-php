@@ -40,8 +40,18 @@ void Producer::publish(Php::Parameters &params)
 
     /* create a message sender */
     message_sender = messagesender_create(link, NULL, NULL);
-    messagesender_set_trace(message_sender, true);
-    messagesender_open(message_sender);
+
+    if (message_sender == NULL) {
+        throw Php::Exception("Could not create message sender");
+    }
+
+    if (session->getConnection()->isDebugOn()) {
+        messagesender_set_trace(message_sender, true);
+    }
+
+    if (messagesender_open(message_sender) != 0) {
+        throw Php::Exception("Error creating messaging sender");
+    }
 
     (void)messagesender_send_async(message_sender, message, on_message_send_complete, message, 10000);
 

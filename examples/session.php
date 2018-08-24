@@ -5,6 +5,6 @@ use Azure\uAMQP\Session;
 
 include_once __DIR__ . '/parameters.php';
 
-$connection = new Connection(HOST, PORT, USE_TLS, KEY_NAME, ACCESS_KEY);
+$connection = new Connection(HOST, PORT, USE_TLS, KEY_NAME, ACCESS_KEY, true);
 
 return new Session($connection);

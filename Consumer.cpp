@@ -11,8 +11,6 @@ void Consumer::__construct(Php::Parameters &params)
     session = (Session*) params[0].implementation();
     resourceName = params[1].stringValue();
 
-    /* listen only on partition 0 */
-//    source = messaging_create_source(("amqps://" + session->getConnection()->getHost() + "/" + resourceName + "/ConsumerGroups/$Default/Partitions/0").c_str());
     source = messaging_create_source(("amqps://" + session->getConnection()->getHost() + "/" + resourceName).c_str());
     target = messaging_create_target("ingress-rx");
     link = link_create(session->getSessionHandler(), "receiver-link", role_receiver, source, target);
@@ -41,7 +39,19 @@ void Consumer::consume(Php::Parameters &params)
 
     /* create a message receiver */
     message_receiver = messagereceiver_create(link, NULL, NULL);
-    messagereceiver_open(message_receiver, on_message_received, message_receiver);
+
+    if (message_receiver == NULL) {
+        throw Php::Exception("Could not create message receiver");
+    }
+
+    if (session->getConnection()->isDebugOn()) {
+        messagereceiver_set_trace(message_receiver, true);
+    }
+
+    if (messagereceiver_open(message_receiver, on_message_received, message_receiver) != 0) {
+        throw Php::Exception("Could not open the message receiver");
+    }
+
     while (true)
     {
         session->getConnection()->doWork();

@@ -20,7 +20,8 @@ extern "C" {
             Php::ByVal("port", Php::Type::Numeric),
             Php::ByVal("useTls", Php::Type::Bool),
             Php::ByVal("keyName", Php::Type::String),
-            Php::ByVal("key", Php::Type::String)
+            Php::ByVal("key", Php::Type::String),
+            Php::ByVal("debug", Php::Type::Bool, false)
         });
 
         Php::Class<Session> session("Azure\\uAMQP\\Session");

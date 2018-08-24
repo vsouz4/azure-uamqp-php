@@ -12,10 +12,13 @@ void Connection::__construct(Php::Parameters &params)
     useTls  = params[2].boolValue();
     keyName = params[3].stringValue();
     key     = params[4].stringValue();
+    debug   = params.size() == 6 ? params[5].boolValue() : false;
 
     bool useAuth = !keyName.empty() && !key.empty();
 
-    platform_init();
+    if (platform_init() != 0) {
+        throw Php::Exception("Could not run platform_init");
+    }
 
     if (useTls) {
         tls_io_config = { host.c_str(), port };
@@ -43,8 +46,9 @@ void Connection::__construct(Php::Parameters &params)
 
     /* create the connection */
     connection = connection_create(useAuth ? sasl_io : socket_io, host.c_str(), "some", NULL, NULL);
-    // uncomment when debugging
-    connection_set_trace(connection, true);
+    if (isDebugOn()) {
+        connection_set_trace(connection, true);
+    }
 }
 
 std::string Connection::getHost()
@@ -60,6 +64,11 @@ CONNECTION_HANDLE Connection::getConnectionHandler()
 void Connection::doWork()
 {
     connection_dowork(connection);
+}
+
+bool Connection::isDebugOn()
+{
+    return debug;
 }
 
 void Connection::close()

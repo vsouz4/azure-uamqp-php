@@ -26,7 +26,7 @@ void Connection::connect()
     bool useAuth = !keyName.empty() && !key.empty();
 
     if (platform_init() != 0) {
-        throw Php::Exception("Could not run platform_init");
+        //throw Php::Exception("Could not run platform_init");
     }
 
     if (useTls) {

@@ -30,11 +30,6 @@ Producer::Producer(Session *session, std::string resourceName)
 
     amqpvalue_destroy(source);
     amqpvalue_destroy(target);
-}
-
-void Producer::publish(Message *message)
-{
-    MESSAGE_HANDLE msg = message->getMessageHandler();
 
     /* create a message sender */
     message_sender = messagesender_create(link, NULL, NULL);
@@ -46,6 +41,12 @@ void Producer::publish(Message *message)
     if (session->getConnection()->isDebugOn()) {
         messagesender_set_trace(message_sender, true);
     }
+}
+
+void Producer::publish(Message *message)
+{
+    MESSAGE_HANDLE msg = message->getMessageHandler();
+    sent_messages = 0;
 
     if (messagesender_open(message_sender) != 0) {
         throw Php::Exception("Error creating messaging sender");
@@ -64,8 +65,11 @@ void Producer::publish(Message *message)
     }
 
     message_destroy(msg);
-    messagesender_destroy(message_sender);
+}
 
+Producer::~Producer()
+{
+    messagesender_destroy(message_sender);
     link_destroy(link);
     session->close();
     session->getConnection()->close();

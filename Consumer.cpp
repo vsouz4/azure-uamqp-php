@@ -31,11 +31,6 @@ Consumer::Consumer(Session *session, std::string resourceName)
 
     amqpvalue_destroy(source);
     amqpvalue_destroy(target);
-}
-
-void Consumer::consume(Php::Value callback)
-{
-    callbackFn = callback;
 
     /* create a message receiver */
     message_receiver = messagereceiver_create(link, NULL, NULL);
@@ -47,6 +42,11 @@ void Consumer::consume(Php::Value callback)
     if (session->getConnection()->isDebugOn()) {
         messagereceiver_set_trace(message_receiver, true);
     }
+}
+
+void Consumer::consume(Php::Value callback)
+{
+    callbackFn = callback;
 
     if (messagereceiver_open(message_receiver, on_message_received, message_receiver) != 0) {
         throw Php::Exception("Could not open the message receiver");
@@ -56,7 +56,10 @@ void Consumer::consume(Php::Value callback)
     {
         session->getConnection()->doWork();
     }
+}
 
+Consumer::~Consumer()
+{
     messagereceiver_destroy(message_receiver);
     link_destroy(link);
     session->close();

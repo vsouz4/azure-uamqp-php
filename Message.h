@@ -10,6 +10,7 @@ private:
     MESSAGE_HANDLE message;
     AMQP_VALUE application_properties;
     AMQP_VALUE annotations_map;
+    Php::Value applicationPropertiesMap;
     BINARY_DATA binary_data;
 
 public:
@@ -23,6 +24,7 @@ public:
     void __construct(Php::Parameters &params);
     Php::Value getBody();
     Php::Value getApplicationProperty(Php::Parameters &params);
+    Php::Value getApplicationProperties();
     void setApplicationProperty(Php::Parameters &params);
     Php::Value getMessageAnnotation(Php::Parameters &params);
     void setMessageAnnotation(Php::Parameters &params);

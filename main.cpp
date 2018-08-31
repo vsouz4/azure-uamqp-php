@@ -38,6 +38,7 @@ extern "C" {
             Php::ByVal("key", Php::Type::String),
             Php::ByVal("type", Php::Type::String)
         });
+        message.method<&Message::getApplicationProperties>("getApplicationProperties");
         message.method<&Message::getMessageAnnotation>("getMessageAnnotation", {
             Php::ByVal("key", Php::Type::String),
             Php::ByVal("type", Php::Type::String)

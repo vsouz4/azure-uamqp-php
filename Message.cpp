@@ -139,6 +139,60 @@ Php::Value Message::getApplicationProperty(Php::Parameters &params)
     return get_value_from_map(application_properties_map, key.c_str(), params[1].stringValue().at(0));
 }
 
+Php::Value Message::getApplicationProperties()
+{
+    if (applicationPropertiesMap != NULL) {
+        return applicationPropertiesMap;
+    }
+
+    uint32_t property_count = 0;
+
+    if (application_properties_map == NULL) {
+        message_get_application_properties(message, &application_properties);
+        application_properties_map = amqpvalue_get_inplace_described_value(application_properties);
+    }
+
+    amqpvalue_get_map_pair_count(application_properties_map, &property_count);
+    for (uint32_t i = 0; i < property_count; i++) {
+        AMQP_VALUE map_key_name = NULL;
+        AMQP_VALUE map_key_value = NULL;
+        const char *key_name;
+        const char* valueString = NULL;
+        int64_t valueTimestamp;
+        int32_t valueInt;
+        double valueDouble;
+
+        amqpvalue_get_map_key_value_pair(application_properties_map, i, &map_key_name, &map_key_value);
+        amqpvalue_get_symbol(map_key_name, &key_name);
+        switch (amqpvalue_get_type(map_key_value)) {
+            default:
+                LogError("Unknown AMQP type");
+                break;
+            case AMQP_TYPE_INT:
+                amqpvalue_get_int(map_key_value, &valueInt);
+                applicationPropertiesMap[key_name] = valueInt;
+                break;
+            case AMQP_TYPE_DOUBLE:
+                amqpvalue_get_double(map_key_value, &valueDouble);
+                applicationPropertiesMap[key_name] = valueDouble;
+                break;
+            case AMQP_TYPE_TIMESTAMP:
+                amqpvalue_get_timestamp(map_key_value, &valueTimestamp);
+                applicationPropertiesMap[key_name] = valueTimestamp;
+                break;
+            case AMQP_TYPE_STRING:
+                amqpvalue_get_string(map_key_value, &valueString);
+                applicationPropertiesMap[key_name] = valueString;
+                break;
+        }
+
+        amqpvalue_destroy(map_key_name);
+        amqpvalue_destroy(map_key_value);
+    }
+
+    return applicationPropertiesMap;
+}
+
 Php::Value Message::getMessageAnnotation(Php::Parameters &params)
 {
     std::string key = params[0].stringValue();

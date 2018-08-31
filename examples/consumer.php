@@ -12,6 +12,8 @@ $connection->consume(
         echo $message->getBody(), PHP_EOL;
         echo $message->getApplicationProperty('some-application-property', 'S'), PHP_EOL;
         echo $message->getMessageAnnotation('x-opt-scheduled-enqueue-time', 'T'), PHP_EOL;
+
+        var_dump($message->getApplicationProperties());
 /*
         echo PHP_EOL;
         echo PHP_EOL;

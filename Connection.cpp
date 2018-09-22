@@ -17,12 +17,14 @@ void Connection::__construct(Php::Parameters &params)
     keyName = params[3].stringValue();
     key     = params[4].stringValue();
     debug   = params.size() == 6 ? params[5].boolValue() : false;
-
-    connect();
 }
 
 void Connection::connect()
 {
+    if (isConnected) {
+        return;
+    }
+
     bool useAuth = !keyName.empty() && !key.empty();
 
     if (platform_init() != 0) {
@@ -61,10 +63,14 @@ void Connection::connect()
 
     // Session
     session = new Session(this);
+
+    isConnected = true;
 }
 
 void Connection::publish(Php::Parameters &params)
 {
+    connect();
+
     std::string resourceName = params[0].stringValue();
     Message *message = (Message*) params[1].implementation();
 
@@ -74,6 +80,8 @@ void Connection::publish(Php::Parameters &params)
 
 void Connection::consume(Php::Parameters &params)
 {
+    connect();
+
     std::string resourceName = params[0].stringValue();
     Php::Value callback = params[1];
 

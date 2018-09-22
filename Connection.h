@@ -18,6 +18,7 @@ private:
     std::string keyName;
     std::string key;
     bool debug;
+    bool isConnected = false;
 
     Session *session;
 

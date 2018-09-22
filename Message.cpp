@@ -9,24 +9,29 @@ static Php::Value get_value_from_map(AMQP_VALUE map, const char* key, const char
     int64_t valueTimestamp;
     int32_t valueInt;
     double valueDouble;
+    int status = 0;
 
     switch (type) {
         case 'S':
-            amqpvalue_get_string(amqp_value_value, &valueString);
+            status = amqpvalue_get_string(amqp_value_value, &valueString);
             result = valueString;
             break;
         case 'T':
-            amqpvalue_get_timestamp(amqp_value_value, &valueTimestamp);
+            status = amqpvalue_get_timestamp(amqp_value_value, &valueTimestamp);
             result = valueTimestamp;
             break;
         case 'I':
-            amqpvalue_get_int(amqp_value_value, &valueInt);
+            status = amqpvalue_get_int(amqp_value_value, &valueInt);
             result = valueInt;
             break;
         case 'D':
-            amqpvalue_get_double(amqp_value_value, &valueDouble);
+            status = amqpvalue_get_double(amqp_value_value, &valueDouble);
             result = valueDouble;
             break;
+    }
+
+    if (status != 0) {
+        throw Php::Exception("Could not parse key '" + std::string(key) + "'");
     }
 
     return result;

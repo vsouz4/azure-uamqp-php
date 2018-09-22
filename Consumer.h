@@ -17,9 +17,9 @@ private:
 
 public:
     Consumer(Session *session, std::string resourceName);
-    ~Consumer();
+    virtual ~Consumer() = default;
 
-    void consume(Php::Value callback);
+    void consume(Php::Value &callback);
 };
 
 #endif

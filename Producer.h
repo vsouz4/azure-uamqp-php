@@ -17,7 +17,7 @@ private:
 
 public:
     Producer(Session *session, std::string resourceName);
-    ~Producer();
+    virtual ~Producer() = default;
 
     void publish(Message *message);
 };

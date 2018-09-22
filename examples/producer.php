@@ -11,4 +11,8 @@ $message->setApplicationProperty('some-application-property', 'S', 'some value')
 $message->setApplicationProperty('some-int-application-property', 'I', 54321);
 $message->setMessageAnnotation('x-opt-scheduled-enqueue-time', 'T', (time() + 5)*1000);
 
-$connection->publish(MY_TOPIC, $message);
+try {
+    $connection->publish(MY_TOPIC, $message);
+} catch (\Exception $e) {
+    echo $e->getMessage();
+}

@@ -9,6 +9,7 @@ class Consumer
 private:
     Session *session;
     std::string resourceName;
+    bool closeRequested = false;
 
     LINK_HANDLE link;
     MESSAGE_RECEIVER_HANDLE message_receiver;
@@ -19,7 +20,10 @@ public:
     Consumer(Session *session, std::string resourceName);
     virtual ~Consumer() = default;
 
-    void consume(Php::Value &callback);
+    void setCallback(Php::Value &callback, Php::Value &loopFn);
+    void consume();
+    void close();
+    bool wasCloseRequested();
 };
 
 #endif

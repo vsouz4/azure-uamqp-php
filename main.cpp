@@ -24,10 +24,13 @@ extern "C" {
             Php::ByVal("resourceName", Php::Type::String),
             Php::ByVal("message", "Azure\\uAMQP\\Message")
         });
-        connection.method<&Connection::consume>("consume", {
+        connection.method<&Connection::setCallback>("setCallback", {
             Php::ByVal("resourceName", Php::Type::String),
-            Php::ByVal("callback", Php::Type::Callable)
+            Php::ByVal("callback", Php::Type::Callable),
+            Php::ByVal("loopFn", Php::Type::Callable)
         });
+        connection.method<&Connection::consume>("consume");
+        connection.method<&Connection::close>("close");
 
         Php::Class<Message> message("Azure\\uAMQP\\Message");
         message.method<&Message::__construct>("__construct", {

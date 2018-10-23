@@ -8,6 +8,7 @@
 #include "Session.h"
 
 class Session;
+class Consumer;
 
 class Connection : public Php::Base
 {
@@ -19,8 +20,10 @@ private:
     std::string key;
     bool debug;
     bool isConnected = false;
+    bool closeRequested = false;
 
     Session *session;
+    Consumer *consumer;
 
     CONNECTION_HANDLE connection;
     XIO_HANDLE sasl_io;
@@ -39,14 +42,15 @@ public:
 
     void __construct(Php::Parameters &params);
     void publish(Php::Parameters &params);
-    void consume(Php::Parameters &params);
+    void setCallback(Php::Parameters &params);
+    void consume();
+    void close();
 
     void connect();
     std::string getHost();
     Session* getSession();
     CONNECTION_HANDLE getConnectionHandler();
     void doWork();
-    void close();
     bool isDebugOn();
 };
 

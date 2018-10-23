@@ -78,15 +78,23 @@ void Connection::publish(Php::Parameters &params)
     producer->publish(message);
 }
 
-void Connection::consume(Php::Parameters &params)
+void Connection::setCallback(Php::Parameters &params)
 {
     connect();
 
     std::string resourceName = params[0].stringValue();
     Php::Value callback = params[1];
+    Php::Value loopFn = params[2];
 
-    Consumer *consumer = new Consumer(session, resourceName);
-    consumer->consume(callback);
+    consumer = new Consumer(session, resourceName);
+    consumer->setCallback(callback, loopFn);
+}
+
+void Connection::consume()
+{
+    if (consumer != NULL) {
+        consumer->consume();
+    }
 }
 
 std::string Connection::getHost()
@@ -111,9 +119,16 @@ bool Connection::isDebugOn()
 
 void Connection::close()
 {
-    connection_destroy(connection);
-    xio_destroy(sasl_io);
-    xio_destroy(tls_io);
-    saslmechanism_destroy(sasl_mechanism_handle);
-    platform_deinit();
+    if (consumer != NULL && !consumer->wasCloseRequested()) {
+        consumer->close();
+    }
+
+    if (!closeRequested) {
+        closeRequested = true;
+        connection_destroy(connection);
+        xio_destroy(sasl_io);
+        xio_destroy(tls_io);
+        saslmechanism_destroy(sasl_mechanism_handle);
+        platform_deinit();
+    }
 }

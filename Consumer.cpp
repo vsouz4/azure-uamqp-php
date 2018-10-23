@@ -6,7 +6,7 @@
 #include "Session.h"
 #include "Message.h"
 
-static Php::Value *callbackFn = NULL;
+static Php::Value *callbackFn;
 static bool consumerStopRunning = false;
 static std::string consumerExceptionMessage = "";
 
@@ -57,7 +57,7 @@ Consumer::Consumer(Session *session, std::string resourceName)
     }
 }
 
-void Consumer::consume(Php::Value &callback)
+void Consumer::setCallback(Php::Value &callback, Php::Value &loopFn)
 {
     callbackFn = &callback;
 
@@ -65,10 +65,21 @@ void Consumer::consume(Php::Value &callback)
         throw Php::Exception("Could not open the message receiver");
     }
 
-    while (!consumerStopRunning)
-    {
+    loopFn();
+}
+
+void Consumer::consume()
+{
+    if (consumerStopRunning) {
+        close();
+    } else {
         session->getConnection()->doWork();
     }
+}
+
+void Consumer::close()
+{
+    closeRequested = true;
     messagereceiver_destroy(message_receiver);
     link_destroy(link);
     session->close();
@@ -76,4 +87,9 @@ void Consumer::consume(Php::Value &callback)
     if (!consumerExceptionMessage.empty()) {
         throw Php::Exception(consumerExceptionMessage);
     }
+}
+
+bool Consumer::wasCloseRequested()
+{
+    return closeRequested;
 }

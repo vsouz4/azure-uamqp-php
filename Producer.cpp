@@ -77,7 +77,6 @@ void Producer::publish(Message *message)
             break;
         }
     }
-
     message_destroy(msg);
     messagesender_destroy(message_sender);
     link_destroy(link);
